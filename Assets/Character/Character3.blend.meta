@@ -12,6 +12,12 @@ ModelImporter:
   - first:
       74: 2667949614841947897
     second: Walk
+  - first:
+      74: -402871941268218097
+    second: WalkL
+  - first:
+      74: -1250308563666316836
+    second: Push
   externalObjects: {}
   materials:
     materialImportMode: 2

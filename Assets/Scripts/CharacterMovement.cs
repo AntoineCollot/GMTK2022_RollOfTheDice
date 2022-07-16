@@ -2,26 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-    public enum Direction { Left,Right, Up, Down,None}
+public enum Direction { Left, Right, Up, Down, None }
 public class CharacterMovement : MonoBehaviour
 {
-    public float moveTime = 0.5f;
+    public float freeMoveInterval = 0.4f;
+    float currentMoveInterval;
     bool isMoving = false;
     Animator anim;
+    float lastMoveTime;
+    Vector3 currentGridPosition;
+    Vector3 refPosition;
+    [Range(0, 1)] public float movementSmooth = 0.1f;
+
+    //Push
+    float refPush;
+    float targetPush;
+    float currentPush;
+
+    public bool IsMoving => Time.time < lastMoveTime + currentMoveInterval;
 
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
+        currentGridPosition = transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isMoving)
-            return;
-
-        if(Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow))
         {
             Move(Direction.Up);
         }
@@ -37,14 +47,21 @@ public class CharacterMovement : MonoBehaviour
         {
             Move(Direction.Down);
         }
+
+        transform.position = Vector3.SmoothDamp(transform.position, currentGridPosition, ref refPosition, movementSmooth);
+
+        //Anim
+        anim.SetBool("IsMoving", IsMoving);
+        currentPush = Mathf.SmoothDamp(currentPush, targetPush, ref refPush, 0.1f);
+        anim.SetFloat("Push", currentPush);
     }
 
     public void Move(Direction dir)
     {
-        if (isMoving)
+        if (IsMoving)
             return;
 
-        Vector3 targetPos = transform.position;
+        Vector3 targetPos = currentGridPosition;
         switch (dir)
         {
             case Direction.Left:
@@ -60,24 +77,28 @@ public class CharacterMovement : MonoBehaviour
                 targetPos.z -= 1;
                 break;
         }
-
-        StartCoroutine(MoveToPos(targetPos));
-    }
-
-    IEnumerator MoveToPos(Vector3 targetPos)
-    {
-        anim.SetTrigger("Walk");
-        isMoving = true;
         transform.LookAt(targetPos);
-        Vector3 startPos = transform.position;
-        float t = 0;
-        while(t<1)
-        {
-            t += Time.deltaTime / moveTime;
-            transform.position = Curves.QuadEaseInOut(startPos, targetPos, Mathf.Clamp01(t));
 
-            yield return null;
+        if (!GameGrid.Instance.CanMove(GameGrid.GetGridPos(targetPos)))
+            return;
+
+        //Check if there is a dice
+        if(GameGrid.HasDice(GameGrid.GetGridPos(targetPos)))
+        {
+            targetPush = 1;
+            currentMoveInterval = GameGrid.PUSH_MOVE_INTERVAl;
+
+            //Check if the dice can move
+            if (!GameGrid.Instance.MoveDice(GameGrid.GetGridPos(targetPos), dir))
+                return;
         }
-        isMoving = false;
+        else
+        {
+            targetPush = 0;
+            currentMoveInterval = freeMoveInterval;
+        }
+
+        currentGridPosition = targetPos;
+        lastMoveTime = Time.time;
     }
 }
