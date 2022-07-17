@@ -9,6 +9,6 @@ public class InitCellType : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameGrid.Instance.SetCellType(GameGrid.GetGridPos(transform.position), type);
+        GameGrid.Instance.SetCellType(GameGrid.GetGridPos(transform.position), type, false);
     }
 }

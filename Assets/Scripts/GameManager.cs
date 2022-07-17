@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
 
     public void FullRespawn()
     {
+        Debug.Log("Respawn");
         if (activeCP != null)
             activeCP.FullRespawn();
     }

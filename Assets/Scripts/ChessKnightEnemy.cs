@@ -9,6 +9,8 @@ public class ChessKnightEnemy : MonoBehaviour
     public Vector3Int AttackGridPos => GameGrid.GetGridPos(transform.position+transform.forward);
     bool isKilled = false;
 
+    public Checkpoint checkpoint;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +18,9 @@ public class ChessKnightEnemy : MonoBehaviour
         DicePower.Instance.onPowerPerformed.AddListener(OnPowerPerformed);
 
         GameGrid.Instance.SetCellType(GridPos, GameGrid.CellType.Obstacle);
+
+        if (checkpoint != null)
+            checkpoint.onRespawn.AddListener(Respawn);
     }
 
     private void OnPowerPerformed(DicePower.Power power, Vector3Int powerGridPos)
@@ -26,7 +31,6 @@ public class ChessKnightEnemy : MonoBehaviour
         //position
         if (GameGrid.AreAdjacent(GridPos, powerGridPos))
         {
-            GameGrid.Instance.SetCellType(GridPos, GameGrid.CellType.Ground);
             Kill();
         }
     }
@@ -47,6 +51,8 @@ public class ChessKnightEnemy : MonoBehaviour
     {
         if (isKilled)
             return;
+
+        GameGrid.Instance.SetCellType(GridPos, GameGrid.CellType.Ground);
 
         PlayerMovement.Instance.onPlayerMovement.RemoveListener(OnPlayerMovement);
         DicePower.Instance.onPowerPerformed.RemoveListener(OnPowerPerformed);
@@ -69,5 +75,19 @@ public class ChessKnightEnemy : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    public void Respawn()
+    {
+        if (!isKilled)
+            return;
+
+        isKilled = false;
+        StopAllCoroutines();
+        PlayerMovement.Instance.onPlayerMovement.AddListener(OnPlayerMovement);
+        DicePower.Instance.onPowerPerformed.AddListener(OnPowerPerformed);
+
+        GetComponentInChildren<Renderer>().material.SetFloat("_Dissolve", 0);
+        GameGrid.Instance.SetCellType(GridPos, GameGrid.CellType.Obstacle);
     }
 }

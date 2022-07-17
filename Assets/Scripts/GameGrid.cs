@@ -4,7 +4,7 @@ public class GameGrid : MonoBehaviour
 {
     public const float PUSH_MOVE_INTERVAl = 0.7f;
 
-    public enum CellType { Ground, Water, Obstacle, Empty }
+    public enum CellType { Ground, Water, Obstacle,Ice, Empty }
     public CellType[,] cells;
     public const int GRID_SIZE_X = 30;
     public const int GRID_SIZE_Y = 30;
@@ -27,13 +27,17 @@ public class GameGrid : MonoBehaviour
         }
     }
 
-    public void SetCellType(Vector3Int gridCoords, CellType type)
+    public void SetCellType(Vector3Int gridCoords, CellType type, bool overrideType = true)
     {
         if (gridCoords.x < 0 || gridCoords.z < 0 || gridCoords.x >= GRID_SIZE_X || gridCoords.z >= GRID_SIZE_Y)
         {
             Debug.LogError(gridCoords + " is out of grid bounds");
             return;
         }
+
+        if (!overrideType && cells[gridCoords.x, gridCoords.z] != CellType.Empty)
+            return;
+
         cells[gridCoords.x, gridCoords.z] = type;
     }
 
@@ -44,7 +48,7 @@ public class GameGrid : MonoBehaviour
 
     public static bool HasDice(Vector3Int gridCoords)
     {
-        return gridCoords == DiceMovement.Instance.GridPos;
+        return gridCoords == DiceMovement.Instance.GridPos && Instance.GetCell(gridCoords) != CellType.Ice;
     }
 
     public bool MoveDice(Vector3Int targetGridPos, Direction dir)
@@ -67,16 +71,19 @@ public class GameGrid : MonoBehaviour
         }
 
         //Check that the dice can move
-        if (GetCell(diceTargetGrisPos) != CellType.Ground)
+        CellType cell = GetCell(diceTargetGrisPos);
+        if (cell != CellType.Ground && cell != CellType.Ice)
             return false;
 
         DiceMovement.Instance.Move(dir);
         return true;
     }
 
-    public bool CanMove(Vector3Int toGridCoords)
+    public bool CanMove(Vector3Int toGridCoords, out bool isIce)
     {
-        return GetCell(toGridCoords) == CellType.Ground;
+        CellType cell = GetCell(toGridCoords);
+        isIce = cell == CellType.Ice;
+        return cell == CellType.Ground || isIce;
     }
 
     public CellType GetCell(Vector3Int gridCoords)

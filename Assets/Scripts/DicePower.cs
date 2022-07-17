@@ -11,7 +11,7 @@ public class DicePower : MonoBehaviour
     public Texture2D[] powerTextures = new Texture2D[6];
     public bool[] facePowerActivated = new bool[6];
 
-    public enum Power { Key,Earth, None}
+    public enum Power { Key,Earth,Ice, None}
     public class PowerEvent : UnityEvent<Power, Vector3Int> { }
     public PowerEvent onPowerPerformed = new PowerEvent();
 
@@ -66,6 +66,9 @@ public class DicePower : MonoBehaviour
             case 4:
                 onPowerPerformed.Invoke(Power.Earth, toGridPos);
                 ScreenShaker.Instance.MediumShake();
+                break;
+            case 2:
+                onPowerPerformed.Invoke(Power.Ice, toGridPos);
                 break;
         }
         StartCoroutine(HighlightFace(faceUpId));

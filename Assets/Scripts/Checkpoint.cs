@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Checkpoint : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class Checkpoint : MonoBehaviour
     [Range(0, 5)] public int diceFaceUp;
     public bool useCustomRotation = false;
     public Vector3 customRotation = Vector3.zero;
+
+    public UnityEvent onRespawn = new UnityEvent();
 
     void Start()
     {
@@ -46,5 +49,7 @@ public class Checkpoint : MonoBehaviour
         else
             DicePower.Instance.SetFaceUp(diceFaceUp);
         PlayerMovement.Instance.Teleport(playerSpawnPosition.position);
+
+        onRespawn.Invoke();
     }
 }

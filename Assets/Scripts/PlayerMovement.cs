@@ -91,11 +91,11 @@ public class PlayerMovement : MonoBehaviour
         }
         transform.LookAt(targetPos);
 
-        if (!GameGrid.Instance.CanMove(GameGrid.GetGridPos(targetPos)))
+        if (!GameGrid.Instance.CanMove(GameGrid.GetGridPos(targetPos), out bool isIce))
             return;
 
         //Check if there is a dice
-        if(GameGrid.HasDice(GameGrid.GetGridPos(targetPos)))
+        if (GameGrid.HasDice(GameGrid.GetGridPos(targetPos)))
         {
             targetPush = 1;
             currentMoveInterval = GameGrid.PUSH_MOVE_INTERVAl;
@@ -110,9 +110,15 @@ public class PlayerMovement : MonoBehaviour
             currentMoveInterval = freeMoveInterval;
         }
 
+
         currentGridPosition = targetPos;
         lastMoveTime = Time.time;
         onPlayerMovement.Invoke(dir, GameGrid.GetGridPos(targetPos));
+
+        if (isIce)
+        {
+            StartCoroutine(IceSlide(dir));
+        }
     }
 
     public void Teleport(Vector3 pos)
@@ -138,5 +144,48 @@ public class PlayerMovement : MonoBehaviour
         GameManager.Instance.FullRespawn();
         lockMovement = false;
         anim.SetBool("IsKilled", false);
+    }
+
+    IEnumerator IceSlide(Direction dir)
+    {
+        lockMovement = true;
+        yield return new WaitForSeconds(0.2f);
+        anim.speed = 0;
+        Vector3 worldDir = Vector3.zero;
+        switch (dir)
+        {
+            case Direction.Left:
+                worldDir.x -= 1;
+                break;
+            case Direction.Right:
+                worldDir.x += 1;
+                break;
+            case Direction.Up:
+                worldDir.z += 1;
+                break;
+            case Direction.Down:
+                worldDir.z -= 1;
+                break;
+        }
+
+        while (GameGrid.Instance.GetCell(GameGrid.GetGridPos(currentGridPosition)) == GameGrid.CellType.Ice)
+        {
+            currentGridPosition += worldDir;
+            yield return new WaitForSeconds(freeMoveInterval - 0.1f);
+        }
+
+        if (GameGrid.HasDice(GameGrid.GetGridPos(currentGridPosition)))
+            currentGridPosition -= worldDir;
+
+        if (!GameGrid.Instance.CanMove(GameGrid.GetGridPos(currentGridPosition), out bool isIce))
+        {
+            anim.speed = 1;
+            Kill();
+            yield break;
+        }
+
+        anim.speed = 1;
+        yield return new WaitForSeconds(freeMoveInterval);
+        lockMovement = false;
     }
 }
