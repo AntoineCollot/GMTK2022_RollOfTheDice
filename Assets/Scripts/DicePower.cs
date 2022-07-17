@@ -61,6 +61,7 @@ public class DicePower : MonoBehaviour
         {
             case 0:
                 onPowerPerformed.Invoke(Power.Key, toGridPos);
+                SoundManager.PlaySound(7);
                 break;
             case 1:
             case 4:
@@ -69,6 +70,7 @@ public class DicePower : MonoBehaviour
                 break;
             case 2:
                 onPowerPerformed.Invoke(Power.Ice, toGridPos);
+                SoundManager.PlaySound(6);
                 break;
         }
         StartCoroutine(HighlightFace(faceUpId));

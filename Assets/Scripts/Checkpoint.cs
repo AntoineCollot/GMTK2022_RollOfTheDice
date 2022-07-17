@@ -39,6 +39,7 @@ public class Checkpoint : MonoBehaviour
         if (GameManager.Instance.SetActiveCP(this))
         {
             GetComponent<Renderer>().materials[1].SetFloat("_Intensity", 1);
+            SoundManager.PlaySound(2);
         }
     }
 
@@ -51,6 +52,7 @@ public class Checkpoint : MonoBehaviour
             DicePower.Instance.SetFaceUp(diceFaceUp);
         PlayerMovement.Instance.Teleport(playerSpawnPosition.position);
 
+        SoundManager.PlaySound(2);
         onRespawn.Invoke();
     }
 }

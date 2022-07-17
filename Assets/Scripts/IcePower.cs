@@ -38,6 +38,8 @@ public class IcePower : MonoBehaviour
 
             pos += direction;
 
+            SoundManager.PlaySound(6);
+
             yield return new WaitForSeconds(0.2f);
         }
     }

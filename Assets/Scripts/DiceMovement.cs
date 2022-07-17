@@ -63,6 +63,7 @@ public class DiceMovement : MonoBehaviour
         isMoving = true;
         float t = 0;
         float lastRot = 0;
+        SoundManager.PlaySound(0);
 
         while (t < 1)
         {
@@ -84,6 +85,7 @@ public class DiceMovement : MonoBehaviour
 
         onDiceMovementEnded.Invoke(dir, GameGrid.GetGridPos(targetPos));
 
+
         isMoving = false;
     }
 
@@ -93,6 +95,7 @@ public class DiceMovement : MonoBehaviour
         isMoving = true;
         float t = 0;
         float lastRot = 0;
+        SoundManager.PlaySound(0);
 
         while (t < 1)
         {
@@ -113,6 +116,7 @@ public class DiceMovement : MonoBehaviour
         transform.eulerAngles = eulerAngles;
 
         onDiceMovementEnded.Invoke(dir, GameGrid.GetGridPos(targetPos));
+
 
         isMoving = false;
     }

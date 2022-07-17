@@ -21,6 +21,9 @@ ModelImporter:
   - first:
       74: -4630339522487117836
     second: Die
+  - first:
+      74: 1354083256325142241
+    second: Sleep
   externalObjects: {}
   materials:
     materialImportMode: 2

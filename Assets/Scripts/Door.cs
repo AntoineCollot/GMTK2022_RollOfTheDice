@@ -27,6 +27,7 @@ public class Door : MonoBehaviour
         {
             anim.SetBool("IsOpen", true);
             GameGrid.Instance.SetCellType(GridPos, GameGrid.CellType.Ground);
+            SoundManager.PlaySound(3);
         }
     }
 }

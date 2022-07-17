@@ -44,6 +44,7 @@ public class ChessKnightEnemy : MonoBehaviour
         {
             GetComponent<Animator>().SetTrigger("Attack");
             PlayerMovement.Instance.Kill();
+            SoundManager.PlaySound(4);
         }
     }
 
@@ -59,6 +60,7 @@ public class ChessKnightEnemy : MonoBehaviour
 
         isKilled = true;
 
+        SoundManager.PlaySound(5);
         StartCoroutine(KillAnim());
     }
 

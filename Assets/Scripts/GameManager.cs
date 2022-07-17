@@ -12,6 +12,13 @@ public class GameManager : MonoBehaviour
     public Checkpoint activeCP { get; private set; }
     public UnityEvent onNewCPActivated = new UnityEvent();
 
+    //End
+    public UnityEvent onGameEnd = new UnityEvent();
+    public bool gameIsFinished = false;
+    public bool gameHasStarted = true;
+
+    public bool GameIsPlayable => !gameIsFinished && gameHasStarted;
+
     private void Awake()
     {
         Instance = this;
@@ -46,5 +53,10 @@ public class GameManager : MonoBehaviour
         activeCP = checkpoint;
         onNewCPActivated.Invoke();
         return true;
+    }
+
+    public void End()
+    {
+        onGameEnd.Invoke();
     }
 }

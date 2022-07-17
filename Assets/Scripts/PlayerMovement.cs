@@ -25,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
 
     public static PlayerMovement Instance;
 
+    bool lastMovePushedDice = false;
     public bool IsMoving => Time.time < lastMoveTime + currentMoveInterval;
 
 
@@ -43,19 +44,19 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Z))
         {
             Move(Direction.Up);
         }
-        else if (Input.GetKey(KeyCode.LeftArrow))
+        else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Q))
         {
             Move(Direction.Left);
         }
-        else if (Input.GetKey(KeyCode.RightArrow))
+        else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
             Move(Direction.Right);
         }
-        else if (Input.GetKey(KeyCode.DownArrow))
+        else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
         {
             Move(Direction.Down);
         }
@@ -70,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(Direction dir)
     {
-        if (IsMoving || lockMovement)
+        if (IsMoving || lockMovement || !GameManager.Instance.GameIsPlayable || DialogueSystem.Instance.isDisplayingDialogues)
             return;
 
         Vector3 targetPos = currentGridPosition;
@@ -100,6 +101,10 @@ public class PlayerMovement : MonoBehaviour
             targetPush = 1;
             currentMoveInterval = GameGrid.PUSH_MOVE_INTERVAl;
 
+            if (!lastMovePushedDice)
+                SoundManager.PlaySound(1);
+            lastMovePushedDice = true;
+
             //Check if the dice can move
             if (!GameGrid.Instance.MoveDice(GameGrid.GetGridPos(targetPos), dir))
                 return;
@@ -108,6 +113,7 @@ public class PlayerMovement : MonoBehaviour
         {
             targetPush = 0;
             currentMoveInterval = freeMoveInterval;
+            lastMovePushedDice = false;
         }
 
 
