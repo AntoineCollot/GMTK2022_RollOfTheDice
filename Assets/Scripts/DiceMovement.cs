@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+public class MovementEvent : UnityEvent<Direction, Vector3Int> { }
 public class DiceMovement : MonoBehaviour
 {
     bool isMoving = false;
 
-    public class MovementEvent : UnityEvent<Direction, Vector3Int> { }
     public MovementEvent onDiceMovementStarted = new MovementEvent();
     public MovementEvent onDiceMovementEnded = new MovementEvent();
     public Vector3Int GridPos => GameGrid.GetGridPos(transform.position);

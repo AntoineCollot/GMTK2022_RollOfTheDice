@@ -73,7 +73,7 @@ MonoBehaviour:
   - {fileID: 2800000, guid: b38583c0b5f21014cbb08edd5151c08b, type: 3}
   powerTextures:
   - {fileID: 2800000, guid: 690bc68b4c1a1a04e812c233651f65c1, type: 3}
-  - {fileID: 0}
+  - {fileID: 2800000, guid: 076667ad1a3a2fb4999b18368c776203, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}

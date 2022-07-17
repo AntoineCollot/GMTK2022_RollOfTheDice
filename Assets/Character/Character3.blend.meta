@@ -18,6 +18,9 @@ ModelImporter:
   - first:
       74: -1250308563666316836
     second: Push
+  - first:
+      74: -4630339522487117836
+    second: Die
   externalObjects: {}
   materials:
     materialImportMode: 2

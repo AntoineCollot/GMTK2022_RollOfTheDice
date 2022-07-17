@@ -113,4 +113,10 @@ public class GameGrid : MonoBehaviour
 
         return dist == 1;
     }
+
+    public static bool AreAdjacentDiagonal(Vector3Int a, Vector3Int b)
+    {
+        return Mathf.Abs(a.x - b.x) <= 1 && Mathf.Abs(a.z - b.z) <= 1;
+    }
+
 }

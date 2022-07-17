@@ -8,6 +8,8 @@ public class Checkpoint : MonoBehaviour
     public Vector3Int GridPos => GameGrid.GetGridPos(transform.position);
     public Transform playerSpawnPosition;
     [Range(0, 5)] public int diceFaceUp;
+    public bool useCustomRotation = false;
+    public Vector3 customRotation = Vector3.zero;
 
     void Start()
     {
@@ -39,7 +41,10 @@ public class Checkpoint : MonoBehaviour
     public void FullRespawn()
     {
         DiceMovement.Instance.Teleport(GridPos);
-        DicePower.Instance.SetFaceUp(diceFaceUp);
-        CharacterMovement.Instance.Teleport(playerSpawnPosition.position);
+        if (useCustomRotation)
+            DicePower.Instance.transform.eulerAngles = customRotation;
+        else
+            DicePower.Instance.SetFaceUp(diceFaceUp);
+        PlayerMovement.Instance.Teleport(playerSpawnPosition.position);
     }
 }

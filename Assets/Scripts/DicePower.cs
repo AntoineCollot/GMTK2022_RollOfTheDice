@@ -11,7 +11,7 @@ public class DicePower : MonoBehaviour
     public Texture2D[] powerTextures = new Texture2D[6];
     public bool[] facePowerActivated = new bool[6];
 
-    public enum Power { Key, None}
+    public enum Power { Key,Earth, None}
     public class PowerEvent : UnityEvent<Power, Vector3Int> { }
     public PowerEvent onPowerPerformed = new PowerEvent();
 
@@ -62,6 +62,11 @@ public class DicePower : MonoBehaviour
             case 0:
                 onPowerPerformed.Invoke(Power.Key, toGridPos);
                 break;
+            case 1:
+            case 4:
+                onPowerPerformed.Invoke(Power.Earth, toGridPos);
+                ScreenShaker.Instance.MediumShake();
+                break;
         }
         StartCoroutine(HighlightFace(faceUpId));
     }
@@ -92,16 +97,16 @@ public class DicePower : MonoBehaviour
 
     IEnumerator NewPowerAnim(int faceId)
     {
-        CharacterMovement.Instance.lockMovement = true;
+        PlayerMovement.Instance.lockMovement = true;
 
         yield return new WaitForSeconds(0.5f);
 
         facePowerActivated[faceId] = true;
-        UpdateFaceTextures();
+        faceMaterials[faceId].SetTexture("_FaceTex", powerTextures[faceId]);
 
         yield return new WaitForSeconds(1f);
 
-        CharacterMovement.Instance.lockMovement = false;
+        PlayerMovement.Instance.lockMovement = false;
     }
 
     public int GetFaceUp()
@@ -143,15 +148,15 @@ public class DicePower : MonoBehaviour
             Vector3 worldSpaceNegative = transform.position - transform.TransformDirection(sides[i]);
 
             //The face that is the closest to the player will be the one being up
-            if (Vector3.Distance(CharacterMovement.Instance.transform.position, worldSpacePositive) < minDist)
+            if (Vector3.Distance(PlayerMovement.Instance.transform.position, worldSpacePositive) < minDist)
             {
                 result = i + 1; // index 0 is 1
-                minDist = Vector3.Distance(CharacterMovement.Instance.transform.position, worldSpacePositive);
+                minDist = Vector3.Distance(PlayerMovement.Instance.transform.position, worldSpacePositive);
             }
-            if (Vector3.Distance(CharacterMovement.Instance.transform.position, worldSpaceNegative) < minDist)
+            if (Vector3.Distance(PlayerMovement.Instance.transform.position, worldSpaceNegative) < minDist)
             { // also check opposite side
                 result = 6 - i; // sum of opposite sides = 7
-                minDist = Vector3.Distance(CharacterMovement.Instance.transform.position, worldSpaceNegative);
+                minDist = Vector3.Distance(PlayerMovement.Instance.transform.position, worldSpaceNegative);
             }
         }
         return result - 1;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum Direction { Left, Right, Up, Down, None }
-public class CharacterMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public float freeMoveInterval = 0.4f;
     float currentMoveInterval;
@@ -21,9 +21,10 @@ public class CharacterMovement : MonoBehaviour
 
     public bool lockMovement = false;
 
-    public static CharacterMovement Instance;
+    public MovementEvent onPlayerMovement = new MovementEvent();
 
-    public Vector3Int GridPos => GameGrid.GetGridPos(transform.position);
+    public static PlayerMovement Instance;
+
     public bool IsMoving => Time.time < lastMoveTime + currentMoveInterval;
 
 
@@ -111,11 +112,31 @@ public class CharacterMovement : MonoBehaviour
 
         currentGridPosition = targetPos;
         lastMoveTime = Time.time;
+        onPlayerMovement.Invoke(dir, GameGrid.GetGridPos(targetPos));
     }
 
     public void Teleport(Vector3 pos)
     {
         transform.position = GameGrid.GetGridPos(pos);
         currentGridPosition = GameGrid.GetGridPos(pos);
+    }
+
+    public void Kill()
+    {
+        StartCoroutine(KillAnim());
+    }
+
+    IEnumerator KillAnim()
+    {
+        lockMovement = true;
+
+        yield return new WaitForSeconds(.35f);
+        anim.SetBool("IsKilled", true);
+
+        yield return new WaitForSeconds(1.5f);
+
+        GameManager.Instance.FullRespawn();
+        lockMovement = false;
+        anim.SetBool("IsKilled", false);
     }
 }
