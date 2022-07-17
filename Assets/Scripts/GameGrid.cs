@@ -29,7 +29,7 @@ public class GameGrid : MonoBehaviour
 
     public void SetCellType(Vector3Int gridCoords, CellType type)
     {
-        if(gridCoords.x <0 || gridCoords.z < 0 || gridCoords.x >= GRID_SIZE_X || gridCoords.z >= GRID_SIZE_Y)
+        if (gridCoords.x < 0 || gridCoords.z < 0 || gridCoords.x >= GRID_SIZE_X || gridCoords.z >= GRID_SIZE_Y)
         {
             Debug.LogError(gridCoords + " is out of grid bounds");
             return;
@@ -86,5 +86,31 @@ public class GameGrid : MonoBehaviour
             return CellType.Empty;
         }
         return cells[gridCoords.x, gridCoords.z];
+    }
+
+    private void OnDrawGizmos()
+    {
+        Color color = Color.blue;
+        color.a = 0.5f;
+        Gizmos.color = color;
+        Vector3 pos = Vector3.zero;
+        Vector3 size = new Vector3(1, 0, 1);
+        for (int x = 0; x < GRID_SIZE_X; x++)
+        {
+            for (int y = 0; y < GRID_SIZE_Y; y++)
+            {
+                pos.x = x;
+                pos.z = y;
+                Gizmos.DrawWireCube(pos, size);
+            }
+        }
+    }
+
+    public static bool AreAdjacent(Vector3Int a, Vector3Int b)
+    {
+        int dist = Mathf.Abs(a.x - b.x);
+        dist += Mathf.Abs(a.z - b.z);
+
+        return dist == 1;
     }
 }

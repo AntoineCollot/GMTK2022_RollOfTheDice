@@ -19,7 +19,18 @@ public class CharacterMovement : MonoBehaviour
     float targetPush;
     float currentPush;
 
+    public bool lockMovement = false;
+
+    public static CharacterMovement Instance;
+
+    public Vector3Int GridPos => GameGrid.GetGridPos(transform.position);
     public bool IsMoving => Time.time < lastMoveTime + currentMoveInterval;
+
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -58,7 +69,7 @@ public class CharacterMovement : MonoBehaviour
 
     public void Move(Direction dir)
     {
-        if (IsMoving)
+        if (IsMoving || lockMovement)
             return;
 
         Vector3 targetPos = currentGridPosition;
@@ -100,5 +111,11 @@ public class CharacterMovement : MonoBehaviour
 
         currentGridPosition = targetPos;
         lastMoveTime = Time.time;
+    }
+
+    public void Teleport(Vector3 pos)
+    {
+        transform.position = GameGrid.GetGridPos(pos);
+        currentGridPosition = GameGrid.GetGridPos(pos);
     }
 }
