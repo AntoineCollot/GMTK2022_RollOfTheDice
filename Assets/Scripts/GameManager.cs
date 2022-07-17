@@ -39,9 +39,12 @@ public class GameManager : MonoBehaviour
             activeCP.FullRespawn();
     }
 
-    internal void SetActiveCP(Checkpoint checkpoint)
+    public bool SetActiveCP(Checkpoint checkpoint)
     {
+        if (checkpoint == activeCP)
+            return false;
         activeCP = checkpoint;
         onNewCPActivated.Invoke();
+        return true;
     }
 }

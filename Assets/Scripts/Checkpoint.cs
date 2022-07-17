@@ -36,9 +36,10 @@ public class Checkpoint : MonoBehaviour
 
     public void ActivateCP()
     {
-        GameManager.Instance.SetActiveCP(this);
-
-        GetComponent<Renderer>().materials[1].SetFloat("_Intensity", 1);
+        if (GameManager.Instance.SetActiveCP(this))
+        {
+            GetComponent<Renderer>().materials[1].SetFloat("_Intensity", 1);
+        }
     }
 
     public void FullRespawn()
